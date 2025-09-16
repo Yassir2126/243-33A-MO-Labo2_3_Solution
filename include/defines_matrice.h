@@ -1,3 +1,5 @@
+#ifndef DEFINES_MATRICE_H
+#define DEFINES_MATRICE_H
 #include <Arduino.h>
 #include <bits_manip.h>
 #include <MOMO_RGB_Matrix.h>
@@ -44,3 +46,5 @@ enum Etats {ATTENTE, JEU, GAGNE, PERDU};
 enum Boutons {HAUT, BAS, GAUCHE, DROITE};
 
 MOMO_RGB_Matrix matrix;
+
+#endif

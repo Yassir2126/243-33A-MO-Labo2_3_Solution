@@ -8,7 +8,7 @@
 // Pour obtenir cet exemple de code, voir le dépôt GitHub suivant :
 // https://github.com/gbeaulieuMontmo/243-33A-MO-Labo2_1_Solution.git
 /**************************************************************/
-#include <defines.h>
+#include <defines_matrice.h>
 
 
 // Fonction pour afficher l'état des boutons-poussoirs sur la matrice.
