@@ -8,12 +8,7 @@
 // Pour obtenir cet exemple de code, voir le dépôt GitHub suivant :
 // https://github.com/gbeaulieuMontmo/243-33A-MO-Labo2_1_Solution.git
 /**************************************************************/
-#include <Arduino.h>
-#include <bits_manip.h>
-#include <MOMO_RGB_Matrix.h>
 #include <defines.h>
-
-MOMO_RGB_Matrix matrix;
 
 
 // Fonction pour afficher l'état des boutons-poussoirs sur la matrice.

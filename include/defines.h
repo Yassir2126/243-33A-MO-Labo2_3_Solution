@@ -1,3 +1,7 @@
+#include <Arduino.h>
+#include <bits_manip.h>
+#include <MOMO_RGB_Matrix.h>
+
 // Définition des broches de la DEL1 RVB
 #define DEL1R PG2
 #define DEL1V PG1
@@ -39,3 +43,4 @@
 enum Etats {ATTENTE, JEU, GAGNE, PERDU};
 enum Boutons {HAUT, BAS, GAUCHE, DROITE};
 
+MOMO_RGB_Matrix matrix;
