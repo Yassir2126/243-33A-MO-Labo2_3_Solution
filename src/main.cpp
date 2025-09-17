@@ -167,7 +167,7 @@ void lireSequenceJoueur() {
       jeu.sequenceJoueur[index] = HAUT;
       Serial.println("Haut");
       afficheBoutons(HAUT, true, true);
-      delay(500);
+      delay(250);
       afficheBoutons(HAUT, false, true);
       index++;
     }
@@ -175,7 +175,7 @@ void lireSequenceJoueur() {
       jeu.sequenceJoueur[index] = BAS;
       Serial.println("Bas");
       afficheBoutons(BAS, true, true);
-      delay(500);
+      delay(250);
       afficheBoutons(BAS, false, true);
       index++;
     }
@@ -183,7 +183,7 @@ void lireSequenceJoueur() {
       jeu.sequenceJoueur[index] = GAUCHE;
       Serial.println("Gauche");
       afficheBoutons(GAUCHE, true, true);
-      delay(500);
+      delay(250);
       afficheBoutons(GAUCHE, false, true);
       index++;
     }
@@ -191,7 +191,7 @@ void lireSequenceJoueur() {
       jeu.sequenceJoueur[index] = DROITE;
       Serial.println("Droite");
       afficheBoutons(DROITE, true, true);
-      delay(500);
+      delay(250);
       afficheBoutons(DROITE, false, true);
       index++;
     }
@@ -260,7 +260,7 @@ void setup() {
   matrix.fillScreen(matrix.Color333(0, 0, 0));
   matrix.setTextColor(matrix.Color333(7, 7, 7));
   matrix.setTextSize(1);
-  randomSeed(analogRead(0));
+  randomSeed(random(0, 100000));
   DDRG = setBitM(DDRG, B00000111); // Configure les broches de la DEL1 RVB comme sorties
   DDRL = setBitM(DDRL, B11111100); // Configure les broches de la DEL2 et DEL3 RVB comme sorties
   DDRC = clearBitM(DDRC, B11111111); // Configure les broches des boutons-poussoirs comme entrées
