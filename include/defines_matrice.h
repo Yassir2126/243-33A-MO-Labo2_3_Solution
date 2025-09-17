@@ -40,9 +40,9 @@
 #define BTN_GAUCHE PC1
 #define BTN_DROITE PC3 
 
-#define TEMPS_RAFRAICHISSEMENT 50 // en ms
+#define TEMPS_RAFRAICHISSEMENT_BOUTON 50 // en ms
+#define TAUX_RAFRAICHISSEMENT_ECRAN 100 // en ms
 
-enum Etats {ATTENTE, JEU, GAGNE, PERDU};
 enum Boutons {HAUT, BAS, GAUCHE, DROITE};
 
 MOMO_RGB_Matrix matrix;
