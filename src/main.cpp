@@ -289,8 +289,8 @@ void setup() {
 
   DDRG = setBitM(DDRG, B00000111); // Configure les broches de la DEL1 RVB comme sorties
   DDRL = setBitM(DDRL, B11111100); // Configure les broches de la DEL2 et DEL3 RVB comme sorties
-  DDRC = clearBitM(DDRC, B11111111); // Configure les broches des boutons-poussoirs comme entrées
-  PORTC = setBitM(PORTC, B11111111); // Active les résistances de pullups des broches des boutons-poussoirs
+  DDRC = clearBitM(DDRC, B11111110); // Configure les broches des boutons-poussoirs comme entrées
+  PORTC = setBitM(PORTC, B11111110); // Active les résistances de pullups des broches des boutons-poussoirs
   etatDuJeu = DEBUT;
   Serial.println("Changement d'état: DEBUT");
 }
