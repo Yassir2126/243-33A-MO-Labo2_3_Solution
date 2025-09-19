@@ -1,12 +1,39 @@
 /**************************************************************/
 // Date de création du programme: 10 septembre 2025
-// Date de la dernière modification: 16 septembre 2025
+// Date de la dernière modification: 19 septembre 2025
 // Nom du programmeur principal: Guillaume Beaulieu
 //
 // But du programme: solution de base pour le laboratoire 2-3
+// Le jeu Simon consiste à mémoriser une séquence de boutons aléatoires
+// affichée par l'ordinateur et à la reproduire en appuyant sur les 
+// boutons-poussoirs dans le même ordre. La séquence commence avec
+// une longueur de 4 et augmente de 1 à chaque tour réussi. Si le joueur
+// se trompe, le jeu se termine et affiche "Perdu". S'il réussit
+// le jeu affiche "Gagné" et une nouvelle séquence commence.
+//
+// Ici nous voyons qu'il y a beaucoup de code dans un seul fichier. Normalement,
+// on diviserait le code en plusieurs fichiers pour une meilleure organisation.
+// Nous verrons comment faire cela dans les prochains laboratoires.
+// Notez que les fichiers d'en-tête (defines_matrice.h et bits_manip.h) ont
+// été créés pour organiser les définitions et les fonctions. Nous verrons
+// après l'examen 1 comment créer des fichiers source (.cpp) pour encore plus
+// d'organisation.
+//
+// Ajout de fonctionnalités possibles:
+// - Ajouter plus de boutons-poussoirs pour une séquence plus complexe.
+// - Ajouter des niveaux de difficulté avec des séquences plus longues ou des
+//   délais plus courts.
+// - Ajouter un mode multijoueur où deux joueurs peuvent s'affronter.
+// - Ajouter un tableau de scores pour suivre les meilleurs scores des joueurs.
+// - Ajouter des animations sur la matrice pour rendre le jeu plus attrayant.
+// - Ajouter des niveaux de difficulté progressifs où la vitesse d'affichage
+//   de la séquence augmente à chaque tour réussi.
+// - Ajouter un mode "mémoire" où le joueur doit mémoriser la séquence sans
+//   l'afficher à l'écran.
+// - Etc.
 //
 // Pour obtenir cet exemple de code, voir le dépôt GitHub suivant :
-// https://github.com/gbeaulieuMontmo/243-33A-MO-Labo2_1_Solution.git
+// https://github.com/gbeaulieuMontmo/243-33A-MO-Labo2_3_Solution.git
 /**************************************************************/
 #include <defines_matrice.h>
 #include <Arduino.h>
@@ -122,22 +149,6 @@ void lireBoutonsDebug() {
   }  
 }
 
-
-// Fonction pour gérer l'état DEBUT du jeu.
-void etatDebut() {
-  // Initialisation du jeu
-  afficheTitre();
-  if(isBitSet(PINC, BTN_A) == 0) {
-    matrix.fillScreen(matrix.Color333(0, 0, 0));
-    afficheBoutons(HAUT, false, true);
-    afficheBoutons(BAS, false, true);
-    afficheBoutons(GAUCHE, false, true);
-    afficheBoutons(DROITE, false, true);
-    etatDuJeu = JEU; 
-    Serial.println("Changement d'état: JEU");
-  }
-}
-
 // Fonction pour réinitialiser les séquences de l'ordinateur et du joueur.
 void videSequence() {
   for(int i = 0; i < TAILLE_MAX_SEQUENCE; i++) {
@@ -198,6 +209,22 @@ bool VerificationSequences() {
   return true;
 }
 
+// Fonction pour gérer l'état DEBUT du jeu.
+void etatDebut() {
+  // Initialisation du jeu
+  afficheTitre();
+  if(isBitSet(PINC, BTN_A) == 0) {
+    matrix.fillScreen(matrix.Color333(0, 0, 0));
+    afficheBoutons(HAUT, false, true);
+    afficheBoutons(BAS, false, true);
+    afficheBoutons(GAUCHE, false, true);
+    afficheBoutons(DROITE, false, true);
+    etatDuJeu = JEU; 
+    Serial.println("Changement d'état: JEU");
+    delay(500); // Petite pause avant de commencer le jeu
+  }
+}
+
 // Fonction pour gérer l'état JEU du jeu.
 void etatJeu() {
   videSequence();
@@ -233,6 +260,7 @@ void etatGagne() {
   afficheBoutons(BAS, false, true);
   afficheBoutons(GAUCHE, false, true);
   afficheBoutons(DROITE, false, true);
+  delay(500); // Petite pause avant de commencer le prochain tour
 }
 
 void etatPerdu() {
