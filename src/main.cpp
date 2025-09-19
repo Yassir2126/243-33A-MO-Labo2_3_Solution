@@ -11,13 +11,17 @@
 #include <defines_matrice.h>
 #include <Arduino.h>
 
+#define TAILLE_MAX_SEQUENCE 100
+#define LONGUEUR_INITIALE 4
+#define NOMBRE_BOUTONS 4
+
 enum Etats {DEBUT, JEU, GAGNE, PERDU};
 Etats etatDuJeu = DEBUT;
 
 struct SequenceJeu {
-  int sequenceOrdi[100]; // Séquence générée par l'ordinateur
-  int sequenceJoueur[100]; // Séquence entrée par le joueur
-  int longueur = 4;      // Longueur actuelle de la séquence
+  int sequenceOrdi[TAILLE_MAX_SEQUENCE];
+  int sequenceJoueur[TAILLE_MAX_SEQUENCE];
+  int longueur = LONGUEUR_INITIALE;
 };
 
 SequenceJeu jeu;
@@ -30,7 +34,7 @@ void afficheTitre() {
   matrix.setCursor(0, 10);
   matrix.setTextColor(matrix.Color333(7, 0, 0));
   matrix.print("Appuie sur");
-  matrix.setCursor(0, 20);
+  matrix.setCursor(30, 20);
   matrix.setTextColor(matrix.Color333(0, 0, 7));
   matrix.print("A");
 }
@@ -118,6 +122,7 @@ void lireBoutonsDebug() {
   }  
 }
 
+
 // Fonction pour gérer l'état DEBUT du jeu.
 void etatDebut() {
   // Initialisation du jeu
@@ -135,7 +140,7 @@ void etatDebut() {
 
 // Fonction pour réinitialiser les séquences de l'ordinateur et du joueur.
 void videSequence() {
-  for(int i = 0; i < 100; i++) {
+  for(int i = 0; i < TAILLE_MAX_SEQUENCE; i++) {
     jeu.sequenceOrdi[i] = -1;
     jeu.sequenceJoueur[i] = -1;
   }
@@ -144,7 +149,7 @@ void videSequence() {
 // Fonction pour remplir la séquence de l'ordinateur avec des valeurs aléatoires.
 void remplirSequenceOrdi() {
   for(int i = 0; i < jeu.longueur; i++) {
-    jeu.sequenceOrdi[i] = random(0, 4); // Génère un nombre aléatoire entre 0 et 3
+    jeu.sequenceOrdi[i] = random(0, NOMBRE_BOUTONS); // Génère un nombre aléatoire entre 0 et 3
   }
 }
 
@@ -158,46 +163,32 @@ void afficheSequenceOrdi() {
   }
 } 
 
-// Fonction pour lire la séquence entrée par le joueur.
+int lireBouton() {
+  if(!isBitSet(PINC, BTN_HAUT)) return HAUT;
+  if(!isBitSet(PINC, BTN_BAS)) return BAS;
+  if(!isBitSet(PINC, BTN_GAUCHE)) return GAUCHE;
+  if(!isBitSet(PINC, BTN_DROITE)) return DROITE;
+  return -1;
+}
+
 void lireSequenceJoueur() {
   int index = 0;
   while(index < jeu.longueur) {
-
-    if(!isBitSet(PINC, BTN_HAUT) && jeu.sequenceJoueur[index] == -1) {
-      jeu.sequenceJoueur[index] = HAUT;
-      Serial.println("Haut");
-      afficheBoutons(HAUT, true, true);
+    int bouton = lireBouton();
+    if(bouton != -1 && jeu.sequenceJoueur[index] == -1) {
+      jeu.sequenceJoueur[index] = bouton;
+      //Affichage du bouton appuyé sur le moniteur série
+      Serial.println(bouton == HAUT ? "Haut" : bouton == BAS ? "Bas" : bouton == GAUCHE ? "Gauche" : "Droite");
+      //Affichage du bouton appuyé sur la matrice
+      afficheBoutons(bouton, true, true);
       delay(250);
-      afficheBoutons(HAUT, false, true);
-      index++;
-    }
-    if(!isBitSet(PINC, BTN_BAS) && jeu.sequenceJoueur[index] == -1) {
-      jeu.sequenceJoueur[index] = BAS;
-      Serial.println("Bas");
-      afficheBoutons(BAS, true, true);
-      delay(250);
-      afficheBoutons(BAS, false, true);
-      index++;
-    }
-    if(!isBitSet(PINC, BTN_GAUCHE) && jeu.sequenceJoueur[index] == -1) {
-      jeu.sequenceJoueur[index] = GAUCHE;
-      Serial.println("Gauche");
-      afficheBoutons(GAUCHE, true, true);
-      delay(250);
-      afficheBoutons(GAUCHE, false, true);
-      index++;
-    }
-    if(!isBitSet(PINC, BTN_DROITE) && jeu.sequenceJoueur[index] == -1) {
-      jeu.sequenceJoueur[index] = DROITE;
-      Serial.println("Droite");
-      afficheBoutons(DROITE, true, true);
-      delay(250);
-      afficheBoutons(DROITE, false, true);
-      index++;
+      afficheBoutons(bouton, false, true);
+      index++; // Passe au bouton suivant dans la séquence du joueur
     }
   }
 }
 
+// Fonction pour vérifier si la séquence du joueur correspond à celle de l'ordinateur.
 bool VerificationSequences() {
   for(int i = 0; i < jeu.longueur; i++) {
     if(jeu.sequenceOrdi[i] != jeu.sequenceJoueur[i]) {
@@ -207,6 +198,7 @@ bool VerificationSequences() {
   return true;
 }
 
+// Fonction pour gérer l'état JEU du jeu.
 void etatJeu() {
   videSequence();
   remplirSequenceOrdi();
@@ -223,14 +215,15 @@ void etatJeu() {
   }
 }
 
+// Fonction pour gérer l'état GAGNE du jeu.
 void etatGagne() {
   jeu.longueur++;
-  if(jeu.longueur > 200) {
-    jeu.longueur = 200; // Limite la longueur maximale à 100
+  if(jeu.longueur > TAILLE_MAX_SEQUENCE) {
+    jeu.longueur = TAILLE_MAX_SEQUENCE;
   }
   matrix.fillScreen(matrix.Color333(0, 0, 7)); // Vert pour gagné
   matrix.setCursor(10, 10);
-  matrix.setTextColor(matrix.Color333(7, 7, 7));
+  matrix.setTextColor(matrix.Color333(0, 0, 0));
   matrix.print("GAGNE!");
   delay(2000); // Affiche le message pendant 2 secondes
   matrix.fillScreen(matrix.Color333(0, 0, 0));
@@ -243,10 +236,10 @@ void etatGagne() {
 }
 
 void etatPerdu() {
-  jeu.longueur = 4; // Réinitialise la longueur de la séquence
+  jeu.longueur = LONGUEUR_INITIALE;
   matrix.fillScreen(matrix.Color333(7, 0, 0)); // Rouge pour perdu
   matrix.setCursor(10, 10);
-  matrix.setTextColor(matrix.Color333(7, 7, 7));
+  matrix.setTextColor(matrix.Color333(0, 0, 0));
   matrix.print("PERDU!");
   delay(2000); // Affiche le message pendant 2 secondes
   matrix.fillScreen(matrix.Color333(0, 0, 0));
@@ -273,6 +266,7 @@ void loop() {
 
   switch(etatDuJeu) {
     case DEBUT:
+      // Logique de l'état DEBUT
       etatDebut();
       break;
 
