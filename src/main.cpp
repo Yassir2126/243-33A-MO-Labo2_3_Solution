@@ -253,7 +253,12 @@ void setup() {
   matrix.fillScreen(matrix.Color333(0, 0, 0));
   matrix.setTextColor(matrix.Color333(7, 7, 7));
   matrix.setTextSize(1);
-  randomSeed(random(0, 100000));
+  
+  // Génération d'une graine aléatoire basée sur le bruit électrique des broches analogiques
+  // Ici on utilise A0 et A1 pour plus de variabilité et on ajoute millis() pour éviter d'avoir la même graine à chaque redémarrage rapide
+  // On obtient ainsi une bien meilleure graine aléatoire
+  randomSeed(analogRead(A0) + analogRead(A1) + millis());
+
   DDRG = setBitM(DDRG, B00000111); // Configure les broches de la DEL1 RVB comme sorties
   DDRL = setBitM(DDRL, B11111100); // Configure les broches de la DEL2 et DEL3 RVB comme sorties
   DDRC = clearBitM(DDRC, B11111111); // Configure les broches des boutons-poussoirs comme entrées
