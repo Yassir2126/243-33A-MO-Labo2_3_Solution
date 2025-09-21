@@ -174,6 +174,9 @@ void afficheSequenceOrdi() {
   }
 } 
 
+// Fonction pour lire quel bouton a été appuyé par le joueur.
+// Retourne HAUT, BAS, GAUCHE, DROITE ou -1 si aucun bouton n'est appuyé.
+// Ici on inverse ! car les boutons sont actifs à l'état bas (0V).
 int lireBouton() {
   if(!isBitSet(PINC, BTN_HAUT)) return HAUT;
   if(!isBitSet(PINC, BTN_BAS)) return BAS;
