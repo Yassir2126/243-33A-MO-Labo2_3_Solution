@@ -76,6 +76,8 @@ void afficheTitre()
 
 // Fonction pour afficher l'état des boutons-poussoirs sur la matrice.
 // Paramètre: bouton - le bouton qui doit être affiché (HAUT, BAS, GAUCHE, DROITE)
+//            isFull - permet d'afficher le bouton rempli ou pas (true = rempli)
+//            skipRefresh - permet d'afficher le bouton même si le délai n'est pas terminé.
 void afficheBoutons(int bouton, bool isFull, bool skipRefresh = false)
 {
   static unsigned long ancienRafraichissement = 0;
@@ -220,7 +222,7 @@ void afficheSequenceOrdi()
 // Ici on inverse ! car les boutons sont actifs à l'état bas (0V).
 int lireBouton()
 {
-  if (!isBitSet(PINC, BTN_HAUT))
+  if (isBitSet(PINC, BTN_HAUT) == 0)
     return HAUT;
   if (!isBitSet(PINC, BTN_BAS))
     return BAS;
