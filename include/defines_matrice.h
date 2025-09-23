@@ -43,7 +43,7 @@
 #define TEMPS_RAFRAICHISSEMENT_BOUTON 50 // en ms
 #define TAUX_RAFRAICHISSEMENT_ECRAN 100 // en ms
 
-enum Boutons {HAUT, BAS, GAUCHE, DROITE};
+enum Boutons {HAUT, BAS, GAUCHE, DROITE, A};
 
 MOMO_RGB_Matrix matrix;
 

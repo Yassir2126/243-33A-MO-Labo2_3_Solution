@@ -40,7 +40,7 @@
 
 #define TAILLE_MAX_SEQUENCE 100
 #define LONGUEUR_INITIALE 4
-#define NOMBRE_BOUTONS 4
+#define NOMBRE_BOUTONS 5
 
 enum Etats
 {
@@ -130,6 +130,17 @@ void afficheBoutons(int bouton, bool isFull, bool skipRefresh = false)
         matrix.drawCircle(32, 16, 2, matrix.Color333(7, 7, 7));
       }
       break;
+      case A:
+      if (isFull)
+      {
+        matrix.fillCircle(40, 25, 2, matrix.Color333(7, 7, 7));
+      }
+      else
+      {
+        matrix.fillCircle(40, 25, 2, matrix.Color333(0, 0, 0));
+        matrix.drawCircle(40, 25, 2, matrix.Color333(7, 7, 7));
+      }
+      break;
     }
   }
 }
@@ -140,7 +151,8 @@ void lireBoutonsDebug()
   static bool old_btn_haut = 0;   // Variable pour l'ancienne valeur du bouton haut
   static bool old_btn_bas = 0;    // Variable pour l'ancienne valeur du bouton bas
   static bool old_btn_gauche = 0; // Variable pour l'ancienne valeur du bouton gauche
-  static bool old_btn_droite = 0; // Variable pour l'ancienne valeur du bouton droit
+  static bool old_btn_droite = 0;
+  static bool old_btn_A = 0;  // Variable pour l'ancienne valeur du bouton droit
 
   if (!isBitSet(PINC, BTN_HAUT) && old_btn_haut == 1)
   {
@@ -182,6 +194,11 @@ void lireBoutonsDebug()
     afficheBoutons(DROITE, false);
     old_btn_droite = 1;
   }
+  if (!isBitSet(PINC, BTN_A) && old_btn_A == 1)
+  {
+    afficheBoutons(A, true);
+    old_btn_A = 0;
+  }
 }
 
 // Fonction pour réinitialiser les séquences de l'ordinateur et du joueur.
@@ -199,7 +216,7 @@ void remplirSequenceOrdi()
 {
   for (int i = 0; i < jeu.longueur; i++)
   {
-    jeu.sequenceOrdi[i] = random(0, NOMBRE_BOUTONS); // Génère un nombre aléatoire entre 0 et 3
+    jeu.sequenceOrdi[i] = random(0, NOMBRE_BOUTONS); // Génère un nombre aléatoire entre 0 et 4
   }
 }
 
@@ -228,6 +245,8 @@ int lireBouton()
     return GAUCHE;
   if (!isBitSet(PINC, BTN_DROITE))
     return DROITE;
+    if(!isBitSet(PINC, BTN_A))
+    return A;
   return -1;
 }
 
@@ -278,6 +297,7 @@ void etatDebut()
     afficheBoutons(BAS, false, true);
     afficheBoutons(GAUCHE, false, true);
     afficheBoutons(DROITE, false, true);
+    afficheBoutons(A, false, true);
     etatDuJeu = JEU;
     Serial.println("Changement d'état: JEU");
 
@@ -331,6 +351,7 @@ void etatGagne()
   afficheBoutons(BAS, false, true);
   afficheBoutons(GAUCHE, false, true);
   afficheBoutons(DROITE, false, true);
+  afficheBoutons(A, false, true);
   delay(500); // Petite pause avant de commencer le prochain tour
 }
 
