@@ -208,7 +208,6 @@ void videSequence()
 {
   for (int i = 0; i < TAILLE_MAX_SEQUENCE; i++)
   {
-    jeu.sequenceOrdi[i] = -1;
     jeu.sequenceJoueur[i] = -1;
   }
 }
@@ -220,6 +219,16 @@ void remplirSequenceOrdi()
   {
     jeu.sequenceOrdi[i] = random(0, NOMBRE_BOUTONS); // Génère un nombre aléatoire entre 0 et 4
   }
+}
+
+void remplirUneSequence()
+{
+  if (jeu.longueur < TAILLE_MAX_SEQUENCE)
+  {
+    // Ajouter un nouvel élément aléatoire à la fin de la séquence
+    jeu.sequenceOrdi[jeu.longueur] = random(0, NOMBRE_BOUTONS);
+    jeu.longueur++;
+}
 }
 
 // Fonction pour afficher la séquence de l'ordinateur sur la matrice.
@@ -308,15 +317,24 @@ void etatDebut()
     // On obtient ainsi une bien meilleure graine aléatoire.
     // On le fait pour qu'une nouvelle graine soit générée à chaque fois que le jeu commence.
     randomSeed(analogRead(A0) + analogRead(A1) + millis());
-    delay(500); // Petite pause avant de commencer le jeu
+  // Initialiser les séquences et générer la première séquence ORDI une seule fois
+  videSequence();
+  remplirSequenceOrdi();
+  delay(500); // Petite pause avant de commencer le jeu
   }
 }
 
 // Fonction pour gérer l'état JEU du jeu.
 void etatJeu()
 {
-  videSequence();
-  remplirSequenceOrdi();
+  // Ne pas vider ni régénérer la séquence de l'ordinateur ici afin de
+  // conserver la séquence précédente et n'ajouter qu'un nouvel élément
+  // lors d'une victoire.
+  // Vider uniquement la séquenceJoueur pour la lecture du tour courant.
+  for (int i = 0; i < TAILLE_MAX_SEQUENCE; i++)
+  {
+    jeu.sequenceJoueur[i] = -1;
+  }
   afficheSequenceOrdi();
   lireSequenceJoueur();
   if (VerificationSequences())
@@ -336,11 +354,8 @@ void etatJeu()
 // Fonction pour gérer l'état GAGNE du jeu.
 void etatGagne()
 {
-  jeu.longueur++;
-  if (jeu.longueur > TAILLE_MAX_SEQUENCE)
-  {
-    jeu.longueur = TAILLE_MAX_SEQUENCE;
-  }
+  // Augmenter la longueur et ajouter un nouvel élément aléatoire à la fin
+  remplirUneSequence();
   matrix.fillScreen(matrix.Color333(0, 0, 7)); // Vert pour gagné
   matrix.setCursor(10, 10);
   matrix.setTextColor(matrix.Color333(0, 0, 0));
@@ -366,6 +381,12 @@ void etatPerdu()
   matrix.print("PERDU!");
   delay(2000); // Affiche le message pendant 2 secondes
   matrix.fillScreen(matrix.Color333(0, 0, 0));
+  // Réinitialiser la séquence de l'ordinateur de façon sûre
+  for (int i = 0; i < TAILLE_MAX_SEQUENCE; i++)
+  {
+    jeu.sequenceOrdi[i] = -1;
+    jeu.sequenceJoueur[i] = -1;
+  }
   etatDuJeu = DEBUT;
   Serial.println("Changement d'état: DEBUT");
 }
